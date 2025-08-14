@@ -15,10 +15,11 @@
       <i class="fa-brands fa-whatsapp text-green-500"></i> Auto Chat WA
     </h2>
     
-    <!-- Input Nomor -->
+    <!-- Input Nomor + Flag -->
     <label class="block mb-2 text-sm font-medium text-gray-700">Nomor WhatsApp</label>
     <div class="flex items-center border rounded-lg overflow-hidden mb-4">
-      <span class="bg-gray-200 px-3 text-gray-600">+ </span>
+      <span id="flag" class="px-3 text-lg">🌐</span>
+      <span class="bg-gray-200 px-2 text-gray-600">+ </span>
       <input type="number" id="phone" class="flex-1 p-2 outline-none" placeholder="628123456789" required>
     </div>
 
@@ -26,12 +27,18 @@
     <label class="block mb-2 text-sm font-medium text-gray-700">Pesan</label>
     <textarea id="message" rows="3" class="w-full border rounded-lg p-2 mb-4 outline-none" placeholder="Halo, saya ingin bertanya..."></textarea>
 
-    <!-- Pilih Jenis WA -->
+    <!-- Pilih Jenis WA (Radio Button) -->
     <label class="block mb-2 text-sm font-medium text-gray-700">Jenis WhatsApp</label>
-    <select id="waType" class="w-full border rounded-lg p-2 mb-4 outline-none">
-      <option value="original">WhatsApp Original</option>
-      <option value="business">WhatsApp Business</option>
-    </select>
+    <div class="flex gap-4 mb-4">
+      <label class="flex items-center gap-2">
+        <input type="radio" name="waType" value="original" checked>
+        Original
+      </label>
+      <label class="flex items-center gap-2">
+        <input type="radio" name="waType" value="business">
+        Business
+      </label>
+    </div>
 
     <!-- Tombol Kirim -->
     <button onclick="sendMessage()" class="w-full bg-green-500 text-white py-2 rounded-lg font-medium hover:bg-green-600 transition flex items-center justify-center gap-2">
@@ -40,19 +47,63 @@
   </div>
 
   <script>
+    // Data kode negara minimal 30 negara
+    const countryCodes = {
+      "62": {flag:"🇮🇩", name:"INA"},
+      "1": {flag:"🇺🇸", name:"USA"},
+      "44": {flag:"🇬🇧", name:"UK"},
+      "81": {flag:"🇯🇵", name:"JPN"},
+      "49": {flag:"🇩🇪", name:"GER"},
+      "33": {flag:"🇫🇷", name:"FRA"},
+      "61": {flag:"🇦🇺", name:"AUS"},
+      "39": {flag:"🇮🇹", name:"ITA"},
+      "34": {flag:"🇪🇸", name:"ESP"},
+      "55": {flag:"🇧🇷", name:"BRA"},
+      "7": {flag:"🇷🇺", name:"RUS"},
+      "82": {flag:"🇰🇷", name:"KOR"},
+      "65": {flag:"🇸🇬", name:"SGP"},
+      "66": {flag:"🇹🇭", name:"THA"},
+      "90": {flag:"🇹🇷", name:"TUR"},
+      "46": {flag:"🇸🇪", name:"SWE"},
+      "41": {flag:"🇨🇭", name:"SWI"},
+      "31": {flag:"🇳🇱", name:"NLD"},
+      "27": {flag:"🇿🇦", name:"RSA"},
+      "354": {flag:"🇮🇸", name:"ISL"},
+      "351": {flag:"🇵🇹", name:"POR"},
+      "64": {flag:"🇳🇿", name:"NZL"},
+      "48": {flag:"🇵🇱", name:"POL"},
+      "420": {flag:"🇨🇿", name:"CZE"},
+      "43": {flag:"🇦🇹", name:"AUT"},
+      "36": {flag:"🇭🇺", name:"HUN"},
+      "358": {flag:"🇫🇮", name:"FIN"},
+      "30": {flag:"🇬🇷", name:"GRE"},
+      "372": {flag:"🇪🇪", name:"EST"},
+      "359": {flag:"🇧🇬", name:"BUL"},
+      "46": {flag:"🇸🇪", name:"SWE"}
+    };
+
+    const phoneInput = document.getElementById('phone');
+    const flagSpan = document.getElementById('flag');
+
+    phoneInput.addEventListener('input', () => {
+      let val = phoneInput.value.trim();
+      let detected = {flag:"🌐", name:""};
+      for (let code in countryCodes) {
+        if (val.startsWith(code)) {
+          detected = countryCodes[code];
+          break;
+        }
+      }
+      flagSpan.textContent = detected.flag + (detected.name ? ' ' + detected.name : '');
+    });
+
     function sendMessage() {
-      let phone = document.getElementById('phone').value.trim();
+      let phone = phoneInput.value.trim();
       let message = encodeURIComponent(document.getElementById('message').value.trim());
-      let waType = document.getElementById('waType').value;
+      let waType = document.querySelector('input[name="waType"]:checked').value;
 
-      if (phone.startsWith("0")) {
-        phone = "62" + phone.substring(1);
-      }
-
-      if (!phone) {
-        alert("Masukkan nomor WA terlebih dahulu!");
-        return;
-      }
+      if (phone.startsWith("0")) phone = "62" + phone.substring(1);
+      if (!phone) return alert("Masukkan nomor WA terlebih dahulu!");
 
       let url = waType === "original" 
         ? `https://wa.me/${phone}?text=${message}` 
@@ -61,10 +112,8 @@
       window.open(url, "_blank");
     }
 
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log("Service Worker Registered"));
+      navigator.serviceWorker.register('sw.js').then(()=>console.log("Service Worker Registered"));
     }
   </script>
 </body>
