@@ -78,8 +78,7 @@
       "358": {flag:"🇫🇮", name:"FIN"},
       "30": {flag:"🇬🇷", name:"GRE"},
       "372": {flag:"🇪🇪", name:"EST"},
-      "359": {flag:"🇧🇬", name:"BUL"},
-      "46": {flag:"🇸🇪", name:"SWE"}
+      "359": {flag:"🇧🇬", name:"BUL"}
     };
 
     const phoneInput = document.getElementById('phone');
@@ -102,18 +101,18 @@
       let message = encodeURIComponent(document.getElementById('message').value.trim());
       let waType = document.querySelector('input[name="waType"]:checked').value;
 
-      if (phone.startsWith("0")) phone = "62" + phone.substring(1);
       if (!phone) return alert("Masukkan nomor WA terlebih dahulu!");
+      if (phone.startsWith("0")) phone = "62" + phone.substring(1);
 
-      let url = waType === "original" 
-        ? `https://wa.me/${phone}?text=${message}` 
+      let url = waType === "original"
+        ? `https://wa.me/${phone}?text=${message}`
         : `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
 
       window.open(url, "_blank");
     }
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').then(()=>console.log("Service Worker Registered"));
+      navigator.serviceWorker.register('sw.js').then(() => console.log("Service Worker Registered"));
     }
   </script>
 </body>
