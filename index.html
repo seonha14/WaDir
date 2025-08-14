@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auto Chat WA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#25D366">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <i class="fa-brands fa-whatsapp text-green-500"></i> Auto Chat WA
+    </h2>
+    
+    <!-- Input Nomor -->
+    <label class="block mb-2 text-sm font-medium text-gray-700">Nomor WhatsApp</label>
+    <div class="flex items-center border rounded-lg overflow-hidden mb-4">
+      <span class="bg-gray-200 px-3 text-gray-600">+ </span>
+      <input type="number" id="phone" class="flex-1 p-2 outline-none" placeholder="628123456789" required>
+    </div>
+
+    <!-- Input Pesan -->
+    <label class="block mb-2 text-sm font-medium text-gray-700">Pesan</label>
+    <textarea id="message" rows="3" class="w-full border rounded-lg p-2 mb-4 outline-none" placeholder="Halo, saya ingin bertanya..."></textarea>
+
+    <!-- Pilih Jenis WA -->
+    <label class="block mb-2 text-sm font-medium text-gray-700">Jenis WhatsApp</label>
+    <select id="waType" class="w-full border rounded-lg p-2 mb-4 outline-none">
+      <option value="original">WhatsApp Original</option>
+      <option value="business">WhatsApp Business</option>
+    </select>
+
+    <!-- Tombol Kirim -->
+    <button onclick="sendMessage()" class="w-full bg-green-500 text-white py-2 rounded-lg font-medium hover:bg-green-600 transition flex items-center justify-center gap-2">
+      <i class="fa-brands fa-whatsapp"></i> Kirim Pesan
+    </button>
+  </div>
+
+  <script>
+    function sendMessage() {
+      let phone = document.getElementById('phone').value.trim();
+      let message = encodeURIComponent(document.getElementById('message').value.trim());
+      let waType = document.getElementById('waType').value;
+
+      if (phone.startsWith("0")) {
+        phone = "62" + phone.substring(1);
+      }
+
+      if (!phone) {
+        alert("Masukkan nomor WA terlebih dahulu!");
+        return;
+      }
+
+      let url = waType === "original" 
+        ? `https://wa.me/${phone}?text=${message}` 
+        : `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
+
+      window.open(url, "_blank");
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("Service Worker Registered"));
+    }
+  </script>
+</body>
+</html>
