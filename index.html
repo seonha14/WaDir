@@ -1,102 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Auto Chat WA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WA DIRECT!!!</title>
+
+  <!-- Tailwind + Icon -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#25D366">
+  <meta name="theme-color" content="#25D366" />
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
   <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-      <i class="fa-brands fa-whatsapp text-green-500"></i> Auto Chat WA
-    </h2>
-    
-    <!-- Input Nomor + Flag -->
+    <h1 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+      <i class="fa-brands fa-whatsapp text-green-500"></i> Wa Direct
+    </h1>
+
+    <!-- Nomor + Flag -->
     <label class="block mb-2 text-sm font-medium text-gray-700">Nomor WhatsApp</label>
-    <div class="flex items-center border rounded-lg overflow-hidden mb-4">
-      <span id="flag" class="px-3 text-lg">🌐</span>
-      <span class="bg-gray-200 px-2 text-gray-600">+ </span>
-      <input type="tel" id="phone" class="flex-1 p-2 outline-none" placeholder="628123456789" pattern="[0-9]*" required>
+    <div class="flex items-center border rounded-xl overflow-hidden mb-4">
+      <span id="flag" class="px-3 text-lg select-none">🌐</span>
+      <span class="bg-gray-200 px-2 text-gray-600 select-none">+ </span>
+      <input
+        type="tel"
+        id="phone"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        class="flex-1 p-3 outline-none"
+        placeholder="628123456789"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        required
+      />
     </div>
 
-    <!-- Input Pesan -->
+    <!-- Pesan -->
     <label class="block mb-2 text-sm font-medium text-gray-700">Pesan</label>
-    <textarea id="message" rows="3" class="w-full border rounded-lg p-2 mb-4 outline-none" placeholder="Halo, saya ingin bertanya..."></textarea>
+    <textarea
+      id="message"
+      rows="3"
+      class="w-full border rounded-xl p-3 mb-4 outline-none"
+      placeholder="Halo, saya ingin bertanya..."
+    ></textarea>
 
-    <!-- Pilih Jenis WA (Radio Button) -->
-    <label class="block mb-2 text-sm font-medium text-gray-700">Jenis WhatsApp</label>
-    <div class="flex gap-4 mb-4">
-      <label class="flex items-center gap-2">
-        <input type="radio" name="waType" value="original" checked>
-        Original
+    <!-- Jenis WA (Radio) -->
+    <label class="block mb-2 text-sm font-medium text-gray-700">Buka dengan</label>
+    <div class="flex items-center gap-4 mb-5">
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="radio" name="waType" value="original" checked />
+        <span>WA Original</span>
       </label>
-      <label class="flex items-center gap-2">
-        <input type="radio" name="waType" value="business">
-        Business
+      <label class="flex items-center gap-2 cursor-pointer">
+        <input type="radio" name="waType" value="business" />
+        <span>WA Business</span>
       </label>
     </div>
 
-    <!-- Tombol Kirim -->
-    <button onclick="sendMessage()" class="w-full bg-green-500 text-white py-2 rounded-lg font-medium hover:bg-green-600 transition flex items-center justify-center gap-2">
+    <!-- Actions -->
+    <button
+      id="sendBtn"
+      class="w-full bg-green-500 text-white py-3 rounded-xl font-medium hover:bg-green-600 transition flex items-center justify-center gap-2"
+    >
       <i class="fa-brands fa-whatsapp"></i> Kirim Pesan
     </button>
+
+    <p id="debug" class="text-xs text-gray-400 mt-3 select-text"></p>
   </div>
 
+  <!-- App JS dengan versi untuk bust cache -->
   <script>
-    // Data kode negara minimal 30 negara
-    const countryCodes = {
-      "62": {flag:"🇮🇩", name:"INA"}, "1": {flag:"🇺🇸", name:"USA"}, "44": {flag:"🇬🇧", name:"UK"},
-      "81": {flag:"🇯🇵", name:"JPN"}, "49": {flag:"🇩🇪", name:"GER"}, "33": {flag:"🇫🇷", name:"FRA"},
-      "61": {flag:"🇦🇺", name:"AUS"}, "39": {flag:"🇮🇹", name:"ITA"}, "34": {flag:"🇪🇸", name:"ESP"},
-      "55": {flag:"🇧🇷", name:"BRA"}, "7": {flag:"🇷🇺", name:"RUS"}, "82": {flag:"🇰🇷", name:"KOR"},
-      "65": {flag:"🇸🇬", name:"SGP"}, "66": {flag:"🇹🇭", name:"THA"}, "90": {flag:"🇹🇷", name:"TUR"},
-      "46": {flag:"🇸🇪", name:"SWE"}, "41": {flag:"🇨🇭", name:"SWI"}, "31": {flag:"🇳🇱", name:"NLD"},
-      "27": {flag:"🇿🇦", name:"RSA"}, "354": {flag:"🇮🇸", name:"ISL"}, "351": {flag:"🇵🇹", name:"POR"},
-      "64": {flag:"🇳🇿", name:"NZL"}, "48": {flag:"🇵🇱", name:"POL"}, "420": {flag:"🇨🇿", name:"CZE"},
-      "43": {flag:"🇦🇹", name:"AUT"}, "36": {flag:"🇭🇺", name:"HUN"}, "358": {flag:"🇫🇮", name:"FIN"},
-      "30": {flag:"🇬🇷", name:"GRE"}, "372": {flag:"🇪🇪", name:"EST"}, "359": {flag:"🇧🇬", name:"BUL"}
-    };
+    const v = '20250815'; // bump kalau update
+    const s = document.createElement('script');
+    s.src = `app.js?v=${v}`;
+    document.body.appendChild(s);
+  </script>
 
-    const phoneInput = document.getElementById('phone');
-    const flagSpan = document.getElementById('flag');
-
-    phoneInput.addEventListener('input', () => {
-      let val = phoneInput.value.trim();
-      let detected = {flag:"🌐", name:""};
-
-      // Cek dari kode terpanjang ke terpendek
-      const sortedCodes = Object.keys(countryCodes).sort((a,b) => b.length - a.length);
-      for (let code of sortedCodes) {
-        if (val.startsWith(code)) {
-          detected = countryCodes[code];
-          break;
-        }
-      }
-      flagSpan.textContent = detected.flag + (detected.name ? ' ' + detected.name : '');
-    });
-
-    function sendMessage() {
-      let phone = phoneInput.value.trim();
-      let message = encodeURIComponent(document.getElementById('message').value.trim());
-      let waType = document.querySelector('input[name="waType"]:checked').value;
-
-      if (!phone) return alert("Masukkan nomor WA terlebih dahulu!");
-      if (phone.startsWith("0")) phone = "62" + phone.substring(1);
-
-      let url = waType === "original"
-        ? `https://api.whatsapp.com/send?phone=${phone}&text=${message}`
-        : `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
-
-      console.log("Redirect ke:", url); // Debug
-      window.open(url, "_blank");
-    }
-
+  <!-- SW register dengan versi -->
+  <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').then(() => console.log("Service Worker Registered"));
+      const swv = 'v3';
+      navigator.serviceWorker.register(`sw.js?v=${swv}`).then(() => {
+        console.log('SW registered', swv);
+      });
     }
   </script>
 </body>
