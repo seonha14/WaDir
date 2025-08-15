@@ -1,6 +1,6 @@
 {
-  "name": "Auto Chat WA",
-  "short_name": "AutoWA",
+  "name": "WA DIRECT",
+  "short_name": "WaDir",
   "start_url": "/WaDir/",
   "scope": "/WaDir/",
   "display": "standalone",
