@@ -88,7 +88,7 @@
       if (phone.startsWith("0")) phone = "62" + phone.substring(1);
 
       let url = waType === "original"
-        ? `https://wa.me/${phone}?text=${message}`
+        ? `https://api.whatsapp.com/send?phone=${phone}&text=${message}`
         : `https://api.whatsapp.com/send?phone=${phone}&text=${message}`;
 
       console.log("Redirect ke:", url); // Debug
